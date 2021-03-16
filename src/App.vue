@@ -1,16 +1,18 @@
 <template>
   <Header/>
   &nbsp;
+  <Game/>
   <Board/>
 </template>
 
 <script>
 import Header from './components/Header.vue'
 import Board from './components/Board.vue'
+import Game from "@/components/Game";
 export default {
   name: 'App',
   components: {
-    Header, Board
+    Header, Board, Game
   }
 }
 </script>
