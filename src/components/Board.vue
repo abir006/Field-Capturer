@@ -2,7 +2,13 @@
   <div v-if="board">
     <div v-for="x in rows" :key="x">
     <span v-for="y in cols" :key="y">
-      <img src="../assets/openField.png" alt="">
+      <!-- checking for open field first due to higher availability to reduce time -->
+      <!-- empty field -->
+      <img v-if="board[x-1][y-1]===' '" src="../assets/openField.png" alt="">
+      <!-- player 1 -->
+      <img v-else-if="board[x-1][y-1]==='1'" src="../assets/penguin.png" alt="">
+      <!-- player 2 -->
+      <img v-else src="../assets/cow.png" alt="">
     </span>
     </div>
   </div>
