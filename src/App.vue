@@ -2,6 +2,7 @@
   <Header/>
   &nbsp;
   <Game/>
+  &nbsp;
   <Board/>
 </template>
 

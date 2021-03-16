@@ -3,6 +3,9 @@
   <h3 style="color: #2c3e50">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
   <h1 style="color: darkblue;" v-if="win === 1 || win === 2">Winner is: {{ win }}</h1>
   <h1 style="color: darkblue;" v-else-if="win === 0">Draw !</h1>
+  <button v-if="game.Board" class="btn btn-primary" @click="resetGame()">
+    RESET
+  </button>
 </div>
 </template>
 
@@ -40,6 +43,7 @@ export default {
     }
     // this is the game loop.
     async function nextTurn() {
+      console.log("next")
       //check if game didnt end
       if(win.value === -1) {
         // check if game board is set
@@ -59,25 +63,17 @@ export default {
         }
       }
     }
-    const { game, makeMove , playerNumMovesAvailable, swapPlayer , winner } = global
-   /* const keyPressed = (e) => {
-      if (e.key === "w") {
-        makeMove(-1, 0)
-      } else if (e.key === "a") {
-        makeMove(0, -1)
-      } else if (e.key === "s") {
-        makeMove(1, 0)
-      } else if (e.key === "d") {
-        makeMove(0, 1)          }
+    const resetGame = () => {
+      reset()
+      if(win.value !== -1) {
+        win.value = -1
+        nextTurn()
+      }
     }
-    onMounted(() => {
-      window.addEventListener('keyup', keyPressed)
-    })
-    onUnmounted(() => {
-      window.removeEventListener('keyup', keyPressed)
-    })*/
-    return { game, nextTurn, win }
+    const { game, makeMove , playerNumMovesAvailable, swapPlayer , winner, reset} = global
+    return { game, nextTurn, win, resetGame }
   },
+  // this run when game is first created, which will start the game loop.
   async created() {
     await this.nextTurn()
   }

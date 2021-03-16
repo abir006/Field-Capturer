@@ -7,6 +7,13 @@ const game = reactive({
     PlayerPositions: Array(Array()),
     CurrentPlayer: 1,
 })
+const reset = () => {
+    game.Board = null
+    game.Rows = 0
+    game.Cols = 0
+    game.PlayerPositions = Array(Array())
+    game.CurrentPlayer = 1
+}
 const setBoard = (boardToSet) => {
     game.Board = JSON.parse(JSON.stringify(boardToSet.Board))
     game.Rows = boardToSet.Rows
@@ -80,4 +87,4 @@ const swapPlayer = () => {
     game.CurrentPlayer = (game.CurrentPlayer % 2) + 1
 }
 
-export default { game: readonly(game), setBoard , makeMove, playerNumMovesAvailable, winner, swapPlayer }
+export default { game: readonly(game), setBoard , makeMove, playerNumMovesAvailable, winner, swapPlayer, reset }
