@@ -1,10 +1,38 @@
 import { reactive, readonly } from 'vue'
 
+export const Directions = {UP: "Up",DOWN: "Down",LEFT: "Left",RIGHT: "Right"}
+export const EmptyField = " "
+export const Player1 = "1"
+export const Player2 = "2"
+export const Player1Captured = "captured1"
+export const Player2Captured = "captured2"
+
+class Position{
+    constructor(row, col) {
+        this.row = row
+        this.col = col
+    }
+    Copy(){
+        return new Position(this.row, this.col)
+    }
+    Move(direction){
+        switch(direction) {
+            case Directions.UP:
+                return new Position(this.row - 1, this.col)
+            case Directions.DOWN:
+                return new Position(this.row + 1, this.col)
+            case Directions.LEFT:
+                return new Position(this.row, this.col - 1)
+            case Directions.RIGHT:
+                return new Position(this.row, this.col + 1)
+        }
+    }
+}
 const game = reactive({
     Board: null,
     Rows: 0,
     Cols: 0,
-    PlayerPositions: Array(Array()),
+    PlayerPositions: Array(),
     CurrentPlayer: 1,
 })
 const reset = () => {
@@ -20,69 +48,67 @@ const setBoard = (boardToSet) => {
     game.Cols = boardToSet.Cols
     for(let row=0; row < boardToSet.Rows; row++){
         for(let col=0; col < boardToSet.Cols; col++){
-            if(boardToSet.Board[row][col]==="1"){
-                game.PlayerPositions[1] = [row, col]
+            //found player 1 update his position
+            if(boardToSet.Board[row][col]===Player1){
+                game.PlayerPositions[1] = new Position(row, col)
             }
-            else if(boardToSet.Board[row][col]==="2"){
-                game.PlayerPositions[2] = [row, col]
+            //found player 2 update his position
+            else if(boardToSet.Board[row][col]===Player2){
+                game.PlayerPositions[2] = new Position(row, col)
             }
         }
     }
 }
+
 const playerNumMovesAvailable = (player) => {
     let numSteps = 0
-    //up
-    if(game.PlayerPositions[player][0] > 0 && game.Board[game.PlayerPositions[player][0]-1][game.PlayerPositions[player][1]] === " "){
-        numSteps++
-    }
-    //down
-    if(game.PlayerPositions[player][0] < game.Rows-1 && game.Board[game.PlayerPositions[player][0]+1][game.PlayerPositions[player][1]] === " "){
-        numSteps++
-    }
-    //left
-    if(game.PlayerPositions[player][1] > 0 && game.Board[game.PlayerPositions[player][0]][game.PlayerPositions[player][1]-1] === " "){
-        numSteps++
-    }
-    //right
-    if(game.PlayerPositions[player][1] < game.Cols - 1 && game.Board[game.PlayerPositions[player][0]][game.PlayerPositions[player][1] + 1] === " "){
-        numSteps++
+    for(let direction in Directions){
+        if(isPositionLegal(game.PlayerPositions[player].Move(Directions[direction]))){
+            numSteps++
+        }
     }
     return numSteps
 }
-
-const makeMove = (x, y) => {
-        const currentRow = game.PlayerPositions[game.CurrentPlayer][0]
-        const currentCol = game.PlayerPositions[game.CurrentPlayer][1]
-        const newRow = currentRow+x
-        const newCol = currentCol+y
-        if(0 <= newRow && newRow < game.Rows && 0 <= newCol && newCol < game.Cols){
-            if(game.Board[newRow][newCol]===" "){
-                game.Board[currentRow][currentCol] = "captured"+game.CurrentPlayer.toString()
-                game.PlayerPositions[game.CurrentPlayer] = [newRow, newCol]
-                game.Board[newRow][newCol] = game.CurrentPlayer.toString()
-                swapPlayer()
-            }
+const isPositionLegal = (position) => {
+    if(0 <= position.row && position.row < game.Rows && 0 <= position.col && position.col < game.Cols){
+        if(game.Board[position.row][position.col]=== EmptyField){
+            return true
         }
+    }
+    return false
 }
-
+const captureCurrentPosition = () => {
+    const currentPosition = game.PlayerPositions[game.CurrentPlayer]
+    game.Board[currentPosition.row][currentPosition.col] = "captured"+game.CurrentPlayer.toString()
+}
+const moveToNewPosition = (newPosition) => {
+    captureCurrentPosition()
+    game.PlayerPositions[game.CurrentPlayer] = newPosition
+    game.Board[newPosition.row][newPosition.col] = game.CurrentPlayer.toString()
+}
+const makeMove = (direction) => {
+    const currentPosition = game.PlayerPositions[game.CurrentPlayer]
+    const newPosition = currentPosition.Copy().Move(direction)
+    if(isPositionLegal(newPosition)){
+        moveToNewPosition(newPosition)
+        swapPlayer()
+    }
+}
 const winner = () => {
     let player1Captured = 0
     let player2Captured = 0
     for(let row=0; row < game.Rows; row++){
         for(let col=0; col < game.Cols; col++){
-            if(game.Board[row][col]==="1" || game.Board[row][col]==="captured1"){
+            if(game.Board[row][col] === Player1Captured){
                 player1Captured++
             }
-            else if(game.Board[row][col]==="2" || game.Board[row][col]==="captured2"){
+            else if(game.Board[row][col] === Player2Captured){
                 player2Captured++
             }
         }
     }
-    if(player1Captured > player2Captured) return 1
-    if(player2Captured > player1Captured) return 2
-    return 0
+    return player1Captured > player2Captured ? 1 : player2Captured > player1Captured ? 2 : 0
 }
-
 const swapPlayer = () => {
     game.CurrentPlayer = (game.CurrentPlayer % 2) + 1
 }

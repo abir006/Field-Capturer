@@ -3,15 +3,14 @@
   <h3 style="color: #2c3e50">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
   <h1 style="color: darkblue;" v-if="win === 1 || win === 2">Winner is: {{ win }}</h1>
   <h1 style="color: darkblue;" v-else-if="win === 0">Draw !</h1>
-  <button v-if="game.Board" class="btn btn-primary" @click="resetGame()">
-    RESET
-  </button>
+  <button v-if="game.Board" class="btn btn-primary" @click="resetGame()">RESET</button>
 </div>
 </template>
 
 <script>
 import { ref } from 'vue'
 import global from "@/global";
+import { Directions } from "@/global";
 export default {
   name: "Game",
   setup() {
@@ -20,13 +19,13 @@ export default {
       const pressed = await waitingKeypress();
       if(pressed.key === "w"){
         console.log("w")
-        makeMove(-1, 0)
+        makeMove(Directions.UP)
       }else if(pressed.key === "a"){
-        makeMove(0, -1)
+        makeMove(Directions.LEFT)
       }else if(pressed.key === "s"){
-        makeMove(1, 0)
+        makeMove(Directions.DOWN)
       }else if(pressed.key ==="d"){
-        makeMove(0, 1)
+        makeMove(Directions.RIGHT)
       }
     }
     function waitingKeypress() {

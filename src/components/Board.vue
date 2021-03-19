@@ -4,13 +4,13 @@
     <span v-for="y in game.Cols" :key="y">
       <!-- checking for open field first due to higher availability to reduce time -->
       <!-- empty field -->
-      <img v-if="game.Board[x-1][y-1]===' '" src="../assets/openField.png" alt="">
+      <img v-if="game.Board[x-1][y-1]===EmptyField" src="../assets/openField.png" alt="">
       <!-- player 1 -->
-      <img v-else-if="game.Board[x-1][y-1]==='1'" src="../assets/penguin.png" alt="">
+      <img v-else-if="game.Board[x-1][y-1]===Player1" src="../assets/penguin.png" alt="">
       <!-- player 1 captured -->
-      <img v-else-if="game.Board[x-1][y-1]==='captured1'" src="../assets/penguinCaptured.png" alt="">
+      <img v-else-if="game.Board[x-1][y-1]===Player1Captured" src="../assets/penguinCaptured.png" alt="">
       <!-- player 2 -->
-      <img v-else-if="game.Board[x-1][y-1]==='2'" src="../assets/cow.png" alt="">
+      <img v-else-if="game.Board[x-1][y-1]===Player2" src="../assets/cow.png" alt="">
       <!-- player 2 captured -->
       <img v-else src="../assets/cowCaptured.png" alt="">
     </span>
@@ -26,6 +26,7 @@
 
 <script>
 import global from "@/global";
+import { Player1,Player2,Player1Captured,EmptyField } from "@/global";
 
 export default {
 name: "Board",
@@ -36,22 +37,19 @@ name: "Board",
         [" ", " ", " "],
         [" ", " ", "2"],
       ], Rows : 3, Cols: 3})
-    const mediumMap =
-        ({Board : [
+    const mediumMap = ({Board : [
             ["1", " ", " ", " "],
             [" ", " ", " ", " "],
             [" ", " ", " ", "2"],
           ], Rows : 3, Cols: 4})
-    const largeMap =
-        ({Board : [
+    const largeMap = ({Board : [
             ["1", " ", " "," ", " "],
             [" ", " ", " "," ", " "],
             [" ", " ", " "," ", " "],
             [" ", " ", " "," ", " "],
             [" ", " "," ", " ", "2"],
           ], Rows : 5, Cols: 5})
-    const extraLargeMap =
-        ({Board : [
+    const extraLargeMap = ({Board : [
             ["1", " ", " "," ", " ", " ", " "," ", " ", " "],
             [" ", " ", " "," ", " ", " ", " "," ", " ", " "],
             [" ", " ", " "," ", " ", " ", " "," ", " ", " "],
@@ -63,7 +61,7 @@ name: "Board",
             [" ", " ", " "," ", " ", " ", " "," ", " ", " "],
             [" ", " ", " "," ", " ", " ", " "," ", " ", "2"],
           ], Rows : 10, Cols: 10})
-    return { game , smallMap, mediumMap, largeMap, extraLargeMap, setBoard}
+    return { game , smallMap, mediumMap, largeMap, extraLargeMap, setBoard, Player1, Player2, Player1Captured, EmptyField }
   }
 }
 </script>
