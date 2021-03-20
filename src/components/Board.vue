@@ -10,7 +10,7 @@
             <!-- player 1 -->
             <img v-else-if="game.Board[x-1][y-1]===Player1" src="../assets/penguin.png" alt="Penguin">
             <!-- player 1 captured -->
-            <img v-else-if="game.Board[x-1][y-1]===Player1Captured" src="../assets/penguinCaptured.png">
+            <img v-else-if="game.Board[x-1][y-1]===Player1Captured" src="../assets/penguinCaptured.png" alt="Penguin steps">
             <!-- player 2 -->
             <img v-else-if="game.Board[x-1][y-1]===Player2" src="../assets/cow.png" alt="Cow">
             <!-- player 2 captured -->
@@ -76,8 +76,7 @@ name: "Board",
   font-weight: bold;
 }
 .img-grid {
-  justify-content: center;
-  margin: auto auto;
+  margin: 0 auto;
   width: 70%;
 }
 .row {
@@ -86,7 +85,7 @@ name: "Board",
   display: flex;
 }
 img {
-  border-radius: 16px;
+  border-radius: 30%;
   width: 100%;  }
 .img-wrapper
 {

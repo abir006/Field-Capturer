@@ -14,6 +14,7 @@
     <button class="btn btn-primary" @click="setPlayer(2, new HumanPlayer() )">Human</button>&nbsp;
     <button class="btn btn-primary" @click="setPlayer(2, new SimpleAiPlayer() )">AI</button>
   </div>
+  <div id="snackbar">Illegal move, please try again.</div>
 </div>
 </template>
 
@@ -24,6 +25,45 @@ import { HumanPlayer, SimpleAiPlayer } from './Player';
 export default {
   name: "Game",
   setup() {
+    window.addEventListener('touchstart', handleTouchStart)
+    window.addEventListener('touchmove', handleTouchMove)
+
+    let xDown = null;
+    let yDown = null;
+
+    function handleTouchStart(evt) {
+      xDown = evt.touches[0].clientX;
+      yDown = evt.touches[0].clientY;
+    }
+
+    function handleTouchMove(evt) {
+      if ( ! xDown || ! yDown ) {
+        return;
+      }
+
+      let xUp = evt.touches[0].clientX;
+      let yUp = evt.touches[0].clientY;
+
+      let xDiff = xDown - xUp;
+      let yDiff = yDown - yUp;
+
+      if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
+        if ( xDiff > 0 ) {
+          window.dispatchEvent(new KeyboardEvent('keydown',{'key':'a','isTrusted': 'true'}));
+        } else {
+          window.dispatchEvent(new KeyboardEvent('keydown',{'key':'d','isTrusted': 'true'}));
+        }
+      } else {
+        if ( yDiff > 0 ) {
+          window.dispatchEvent(new KeyboardEvent('keydown',{'key':'w','isTrusted': 'true'}));
+        } else {
+          window.dispatchEvent(new KeyboardEvent('keydown',{'key':'s','isTrusted': 'true'}));
+        }
+      }
+      /* reset values */
+      xDown = null;
+      yDown = null;
+    }
     const win = ref(-1)
     // this is the game loop.
     async function nextTurn() {
@@ -72,5 +112,49 @@ export default {
 <style scoped>
 .btn{
   font-weight: bold;
+}
+#snackbar {
+  visibility: hidden; /* Hidden by default. Visible on click */
+  min-width: 250px; /* Set a default minimum width */
+  margin-left: -125px; /* Divide value of min-width by 2 */
+  background-color: #333; /* Black background color */
+  color: #fff; /* White text color */
+  text-align: center; /* Centered text */
+  border-radius: 2px; /* Rounded borders */
+  padding: 16px; /* Padding */
+  position: fixed; /* Sit on top of the screen */
+  z-index: 1; /* Add a z-index if needed */
+  left: 50%; /* Center the snackbar */
+  bottom: 30px; /* 30px from the bottom */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+  visibility: visible; /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
 }
 </style>

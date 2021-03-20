@@ -37,8 +37,18 @@ const game = reactive({
     CurrentPlayer: 1,
     Players: Array()
 })
+function showIllegalMoveSnackbar() {
+    // Get the snackbar DIV
+    let x = document.getElementById("snackbar");
+
+    // Add the "show" class to DIV
+    x.className = "show";
+
+    // After 3 seconds, remove the show class from DIV
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
 const reset = () => {
-    window.dispatchEvent(new KeyboardEvent('keydown',{'key':'w'}));
+    window.dispatchEvent(new KeyboardEvent('keydown',{'key':'RESET'}));
     game.Board = null
     game.Rows = 0
     game.Cols = 0
@@ -100,6 +110,8 @@ const makeMove = (direction, board) => {
     if(isPositionLegal(newPosition, board)){
         moveToNewPosition(newPosition, board)
         swapPlayer()
+    }else{
+        showIllegalMoveSnackbar()
     }
 }
 const reverseCaptureCurrentPosition = (board) => {
