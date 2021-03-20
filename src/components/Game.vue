@@ -10,48 +10,32 @@
 <script>
 import { ref } from 'vue'
 import global from "@/global";
-import { Directions } from "@/global";
+import { HumanPlayer, SimpleAiPlayer } from './Player';
 export default {
   name: "Game",
   setup() {
     const win = ref(-1)
-    async function keyPressed() {
-      const pressed = await waitingKeypress();
-      if(pressed.key === "w"){
-        console.log("w")
-        makeMove(Directions.UP)
-      }else if(pressed.key === "a"){
-        makeMove(Directions.LEFT)
-      }else if(pressed.key === "s"){
-        makeMove(Directions.DOWN)
-      }else if(pressed.key ==="d"){
-        makeMove(Directions.RIGHT)
-      }
-    }
-    function waitingKeypress() {
-      return new Promise((resolve) => {
-        document.addEventListener('keydown', onKeyHandler);
-        function onKeyHandler(e) {
-          if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
-            document.removeEventListener('keydown', onKeyHandler);
-            resolve(e);
-          }
-          /// add else to handle illegal button
-        }
-      });
-    }
     // this is the game loop.
     async function nextTurn() {
       //check if game didnt end
       if(win.value === -1) {
         // check if game board is set
         if (game.Board !== null) {
-          if (playerNumMovesAvailable(game.CurrentPlayer) !== 0) {
-            await keyPressed()
+          if (playerNumMovesAvailable(game.CurrentPlayer, game.Board) !== 0) {
+            if(game.CurrentPlayer === 1){
+              await (new HumanPlayer().makeTurn())
+            }else {
+              await (new SimpleAiPlayer().makeTurn())
+            }
+
             requestAnimationFrame(nextTurn)
-          } else if (playerNumMovesAvailable((game.CurrentPlayer % 2) + 1) !== 0) {
+          } else if (playerNumMovesAvailable((game.CurrentPlayer % 2) + 1, game.Board) !== 0) {
             swapPlayer()
-            await keyPressed()
+            if(game.CurrentPlayer === 1){
+              await (new HumanPlayer().makeTurn())
+            }else {
+              await (new SimpleAiPlayer().makeTurn())
+            }
             requestAnimationFrame(nextTurn)
           } else {
             win.value = winner()
@@ -68,7 +52,7 @@ export default {
         nextTurn()
       }
     }
-    const { game, makeMove , playerNumMovesAvailable, swapPlayer , winner, reset} = global
+    const { game , playerNumMovesAvailable, swapPlayer , winner, reset} = global
     return { game, nextTurn, win, resetGame }
   },
   // this run when game is first created, which will start the game loop.

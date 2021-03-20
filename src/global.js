@@ -1,6 +1,7 @@
-import { reactive, readonly } from 'vue'
+import { reactive } from 'vue'
 
 export const Directions = {UP: "Up",DOWN: "Down",LEFT: "Left",RIGHT: "Right"}
+const ReverseDirections = {Down: "Up",Up: "Down",Right: "Left",Left: "Right"}
 export const EmptyField = " "
 export const Player1 = "1"
 export const Player2 = "2"
@@ -60,39 +61,54 @@ const setBoard = (boardToSet) => {
     }
 }
 
-const playerNumMovesAvailable = (player) => {
+const playerNumMovesAvailable = (player, board) => {
     let numSteps = 0
     for(let direction in Directions){
-        if(isPositionLegal(game.PlayerPositions[player].Move(Directions[direction]))){
+        if(isPositionLegal(game.PlayerPositions[player].Move(Directions[direction]), board)){
             numSteps++
         }
     }
     return numSteps
 }
-const isPositionLegal = (position) => {
+const isPositionLegal = (position, board) => {
     if(0 <= position.row && position.row < game.Rows && 0 <= position.col && position.col < game.Cols){
-        if(game.Board[position.row][position.col]=== EmptyField){
+        if(board[position.row][position.col] === EmptyField){
             return true
         }
     }
     return false
 }
-const captureCurrentPosition = () => {
+const captureCurrentPosition = (board) => {
     const currentPosition = game.PlayerPositions[game.CurrentPlayer]
-    game.Board[currentPosition.row][currentPosition.col] = "captured"+game.CurrentPlayer.toString()
+    board[currentPosition.row][currentPosition.col] = "captured"+game.CurrentPlayer.toString()
 }
-const moveToNewPosition = (newPosition) => {
-    captureCurrentPosition()
+const moveToNewPosition = (newPosition, board) => {
+    captureCurrentPosition(board)
     game.PlayerPositions[game.CurrentPlayer] = newPosition
-    game.Board[newPosition.row][newPosition.col] = game.CurrentPlayer.toString()
+    board[newPosition.row][newPosition.col] = game.CurrentPlayer.toString()
 }
-const makeMove = (direction) => {
+const makeMove = (direction, board) => {
     const currentPosition = game.PlayerPositions[game.CurrentPlayer]
     const newPosition = currentPosition.Copy().Move(direction)
-    if(isPositionLegal(newPosition)){
-        moveToNewPosition(newPosition)
+    if(isPositionLegal(newPosition, board)){
+        moveToNewPosition(newPosition, board)
         swapPlayer()
     }
+}
+const reverseCaptureCurrentPosition = (board) => {
+    const currentPosition = game.PlayerPositions[game.CurrentPlayer]
+    board[currentPosition.row][currentPosition.col] = EmptyField
+}
+const reverseMoveToNewPosition = (newPosition, board) => {
+    reverseCaptureCurrentPosition(board)
+    game.PlayerPositions[game.CurrentPlayer] = newPosition
+    board[newPosition.row][newPosition.col] = game.CurrentPlayer.toString()
+}
+const reverseMove = (direction, board) => {
+    swapPlayer()
+    const currentPosition = game.PlayerPositions[game.CurrentPlayer]
+    const newPosition = currentPosition.Copy().Move(ReverseDirections[direction])
+    reverseMoveToNewPosition(newPosition, board)
 }
 const winner = () => {
     let player1Captured = 0
@@ -113,4 +129,4 @@ const swapPlayer = () => {
     game.CurrentPlayer = (game.CurrentPlayer % 2) + 1
 }
 
-export default { game: readonly(game), setBoard , makeMove, playerNumMovesAvailable, winner, swapPlayer, reset }
+export default { game, setBoard , makeMove, reverseMove, playerNumMovesAvailable, winner, swapPlayer, reset, isPositionLegal }
