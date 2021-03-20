@@ -1,9 +1,9 @@
 <template>
   <Header/>
   &nbsp;
-  <Game/>
-  &nbsp;
   <Board/>
+  &nbsp;
+  <Game/>
 </template>
 
 <script>
@@ -25,5 +25,6 @@ export default {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  background-color: #FBEEC1;
 }
 </style>

@@ -4,15 +4,15 @@
     <span v-for="y in game.Cols" :key="y">
       <!-- checking for open field first due to higher availability to reduce time -->
       <!-- empty field -->
-      <img v-if="game.Board[x-1][y-1]===EmptyField" src="../assets/openField.png" alt="">
+      <img v-if="game.Board[x-1][y-1]===EmptyField" src="../assets/openField.png" alt="Field">
       <!-- player 1 -->
-      <img v-else-if="game.Board[x-1][y-1]===Player1" src="../assets/penguin.png" alt="">
+      <img v-else-if="game.Board[x-1][y-1]===Player1" src="../assets/penguin.png" alt="Penguin">
       <!-- player 1 captured -->
-      <img v-else-if="game.Board[x-1][y-1]===Player1Captured" src="../assets/penguinCaptured.png" alt="">
+      <img v-else-if="game.Board[x-1][y-1]===Player1Captured" src="../assets/penguinCaptured.png">
       <!-- player 2 -->
-      <img v-else-if="game.Board[x-1][y-1]===Player2" src="../assets/cow.png" alt="">
+      <img v-else-if="game.Board[x-1][y-1]===Player2" src="../assets/cow.png" alt="Cow">
       <!-- player 2 captured -->
-      <img v-else src="../assets/cowCaptured.png" alt="">
+      <img v-else src="../assets/cowCaptured.png" alt="Cow steps">
     </span>
     </div>
   </div>
@@ -65,3 +65,14 @@ name: "Board",
   }
 }
 </script>
+
+<style scoped>
+.btn{
+  font-weight: bold;
+}
+img {
+  border-radius: 14px;
+  width: 10%;
+  max-width: 60px;
+}
+</style>

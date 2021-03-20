@@ -1,8 +1,8 @@
 <template>
 <div>
-  <h3 style="color: #2c3e50">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
-  <h1 style="color: darkblue;" v-if="win === 1 || win === 2">Winner is: {{ win }}</h1>
-  <h1 style="color: darkblue;" v-else-if="win === 0">Draw !</h1>
+  <h3 v-if="game.Board" style="color: #2c3e50">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
+  <h1 style="color: darkblue;" v-if="win === 1 || win === 2">Winner is: {{ win===1 ? "Penguin" : "Cow" }}</h1>
+  <h1 style="color: darkblue;" v-else-if="win === 0">It's a draw !</h1>
   <button v-if="game.Board" class="btn btn-primary" @click="resetGame()">RESET</button>
 </div>
 </template>
@@ -42,7 +42,6 @@ export default {
     }
     // this is the game loop.
     async function nextTurn() {
-      console.log("next")
       //check if game didnt end
       if(win.value === -1) {
         // check if game board is set
