@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import 'prevent-pull-refresh';
 import Header from './components/Header.vue'
 import Board from './components/Board.vue'
 import Game from "@/components/Game";
