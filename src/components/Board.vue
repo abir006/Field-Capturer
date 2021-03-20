@@ -1,26 +1,31 @@
 <template>
-  <div v-if="game.Board">
-    <div v-for="x in game.Rows" :key="x">
-    <span v-for="y in game.Cols" :key="y">
-      <!-- checking for open field first due to higher availability to reduce time -->
-      <!-- empty field -->
-      <img v-if="game.Board[x-1][y-1]===EmptyField" src="../assets/openField.png" alt="Field">
-      <!-- player 1 -->
-      <img v-else-if="game.Board[x-1][y-1]===Player1" src="../assets/penguin.png" alt="Penguin">
-      <!-- player 1 captured -->
-      <img v-else-if="game.Board[x-1][y-1]===Player1Captured" src="../assets/penguinCaptured.png">
-      <!-- player 2 -->
-      <img v-else-if="game.Board[x-1][y-1]===Player2" src="../assets/cow.png" alt="Cow">
-      <!-- player 2 captured -->
-      <img v-else src="../assets/cowCaptured.png" alt="Cow steps">
-    </span>
+  <div v-if="game.Players[1] && game.Players[2]">
+    <div v-if="game.Board">
+      <div class="img-grid">
+        <div class="row" v-for="x in game.Rows" :key="x">
+          <div class="img-wrapper" v-for="y in game.Cols" :key="y">
+            <!-- checking for open field first due to higher availability to reduce time -->
+            <!-- empty field -->
+            <img v-if="game.Board[x-1][y-1]===EmptyField" src="../assets/openField.png" alt="Field">
+            <!-- player 1 -->
+            <img v-else-if="game.Board[x-1][y-1]===Player1" src="../assets/penguin.png" alt="Penguin">
+            <!-- player 1 captured -->
+            <img v-else-if="game.Board[x-1][y-1]===Player1Captured" src="../assets/penguinCaptured.png">
+            <!-- player 2 -->
+            <img v-else-if="game.Board[x-1][y-1]===Player2" src="../assets/cow.png" alt="Cow">
+            <!-- player 2 captured -->
+            <img v-else src="../assets/cowCaptured.png" alt="Cow steps">
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div v-else>
-    <button class="btn btn-primary" @click="setBoard(smallMap)">Small</button>&nbsp;
-    <button class="btn btn-primary" @click="setBoard(mediumMap)">Medium</button>&nbsp;
-    <button class="btn btn-primary" @click="setBoard(largeMap)">Large</button>&nbsp;
-    <button class="btn btn-primary" @click="setBoard(extraLargeMap)">Extra Large</button>
+    <div v-else>
+      <h3 style="color: #2c3e50">Select a game board:</h3>
+      <button class="btn btn-primary" @click="setBoard(smallMap)">Small</button>&nbsp;
+      <button class="btn btn-primary" @click="setBoard(mediumMap)">Medium</button>&nbsp;
+      <button class="btn btn-primary" @click="setBoard(largeMap)">Large</button>&nbsp;
+      <button class="btn btn-primary" @click="setBoard(extraLargeMap)">Extra Large</button>
+    </div>
   </div>
 </template>
 
@@ -70,9 +75,22 @@ name: "Board",
 .btn{
   font-weight: bold;
 }
+.img-grid {
+  justify-content: center;
+  margin: auto auto;
+  width: 70%;
+}
+.row {
+  justify-content: center;
+  width: 100%;
+  display: flex;
+}
 img {
-  border-radius: 14px;
-  width: 10%;
+  border-radius: 16px;
+  width: 100%;  }
+.img-wrapper
+{
   max-width: 60px;
+  flex: 1;
 }
 </style>

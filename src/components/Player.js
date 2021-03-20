@@ -3,26 +3,27 @@ const { makeMove, game, isPositionLegal, playerNumMovesAvailable, reverseMove } 
 export class Player{
     makeTurn() {}
 }
-
 export class HumanPlayer extends Player{
     async makeTurn() {
         const pressed = await waitingKeypress();
-        if(pressed.key === "w"){
-            console.log("w")
-            makeMove(Directions.UP, game.Board)
-        }else if(pressed.key === "a"){
-            makeMove(Directions.LEFT, game.Board)
-        }else if(pressed.key === "s"){
-            makeMove(Directions.DOWN, game.Board)
-        }else if(pressed.key ==="d"){
-            makeMove(Directions.RIGHT, game.Board)
+        if(pressed.isTrusted){
+            if(pressed.key === "w"){
+                console.log("w")
+                makeMove(Directions.UP, game.Board)
+            }else if(pressed.key === "a"){
+                makeMove(Directions.LEFT, game.Board)
+            }else if(pressed.key === "s"){
+                makeMove(Directions.DOWN, game.Board)
+            }else if(pressed.key ==="d"){
+                makeMove(Directions.RIGHT, game.Board)
+            }
         }
         function waitingKeypress() {
             return new Promise((resolve) => {
-                document.addEventListener('keydown', onKeyHandler);
+                window.addEventListener('keydown', onKeyHandler);
                 function onKeyHandler(e) {
                     if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
-                        document.removeEventListener('keydown', onKeyHandler);
+                        window.removeEventListener('keydown', onKeyHandler);
                         resolve(e);
                     }
                     /// add else to handle illegal button

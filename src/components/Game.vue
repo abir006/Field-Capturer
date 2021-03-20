@@ -4,6 +4,16 @@
   <h1 style="color: darkblue;" v-if="win === 1 || win === 2">Winner is: {{ win===1 ? "Penguin" : "Cow" }}</h1>
   <h1 style="color: darkblue;" v-else-if="win === 0">It's a draw !</h1>
   <button v-if="game.Board" class="btn btn-primary" @click="resetGame()">RESET</button>
+  <div v-if="!game.Players[1]">
+    <h3 style="color: #2c3e50">Select player for penguin:</h3>
+    <button class="btn btn-primary" @click="setPlayer(1, new HumanPlayer() )">Human</button>&nbsp;
+    <button class="btn btn-primary" @click="setPlayer(1, new SimpleAiPlayer() )">AI</button>
+  </div>
+  <div v-else-if="!game.Players[2]">
+    <h3 style="color: #2c3e50">Select player for cow:</h3>
+    <button class="btn btn-primary" @click="setPlayer(2, new HumanPlayer() )">Human</button>&nbsp;
+    <button class="btn btn-primary" @click="setPlayer(2, new SimpleAiPlayer() )">AI</button>
+  </div>
 </div>
 </template>
 
@@ -22,19 +32,16 @@ export default {
         // check if game board is set
         if (game.Board !== null) {
           if (playerNumMovesAvailable(game.CurrentPlayer, game.Board) !== 0) {
-            if(game.CurrentPlayer === 1){
-              await (new HumanPlayer().makeTurn())
-            }else {
-              await (new SimpleAiPlayer().makeTurn())
+            await game.Players[game.CurrentPlayer].makeTurn()
+            if(!(game.Players[game.CurrentPlayer] instanceof HumanPlayer)){
+              await new Promise(r => setTimeout(r, 260));
             }
-
             requestAnimationFrame(nextTurn)
           } else if (playerNumMovesAvailable((game.CurrentPlayer % 2) + 1, game.Board) !== 0) {
             swapPlayer()
-            if(game.CurrentPlayer === 1){
-              await (new HumanPlayer().makeTurn())
-            }else {
-              await (new SimpleAiPlayer().makeTurn())
+            await game.Players[game.CurrentPlayer].makeTurn()
+            if(!(game.Players[game.CurrentPlayer] instanceof HumanPlayer)){
+              await new Promise(r => setTimeout(r, 260));
             }
             requestAnimationFrame(nextTurn)
           } else {
@@ -52,8 +59,8 @@ export default {
         nextTurn()
       }
     }
-    const { game , playerNumMovesAvailable, swapPlayer , winner, reset} = global
-    return { game, nextTurn, win, resetGame }
+    const { game , playerNumMovesAvailable, swapPlayer , winner, reset, setPlayer } = global
+    return { game, nextTurn, win, resetGame, setPlayer , HumanPlayer, SimpleAiPlayer }
   },
   // this run when game is first created, which will start the game loop.
   async created() {
@@ -63,5 +70,7 @@ export default {
 </script>
 
 <style scoped>
-
+.btn{
+  font-weight: bold;
+}
 </style>

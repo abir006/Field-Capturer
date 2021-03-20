@@ -35,13 +35,20 @@ const game = reactive({
     Cols: 0,
     PlayerPositions: Array(),
     CurrentPlayer: 1,
+    Players: Array()
 })
 const reset = () => {
+    window.dispatchEvent(new KeyboardEvent('keydown',{'key':'w'}));
     game.Board = null
     game.Rows = 0
     game.Cols = 0
     game.PlayerPositions = Array(Array())
     game.CurrentPlayer = 1
+    game.Players[1] = null
+    game.Players[2] = null
+}
+const setPlayer= (playerNumber, playerType) => {
+    game.Players[playerNumber] = playerType
 }
 const setBoard = (boardToSet) => {
     game.Board = JSON.parse(JSON.stringify(boardToSet.Board))
@@ -129,4 +136,4 @@ const swapPlayer = () => {
     game.CurrentPlayer = (game.CurrentPlayer % 2) + 1
 }
 
-export default { game, setBoard , makeMove, reverseMove, playerNumMovesAvailable, winner, swapPlayer, reset, isPositionLegal }
+export default { game, setBoard , makeMove, reverseMove, playerNumMovesAvailable, winner, swapPlayer, reset, isPositionLegal, setPlayer }
