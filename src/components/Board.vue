@@ -83,6 +83,7 @@ name: "Board",
   justify-content: center;
   width: 100%;
   display: flex;
+  margin: 0;
 }
 img {
   border-radius: 30%;
@@ -91,5 +92,14 @@ img {
 {
   max-width: 60px;
   flex: 1;
+}
+
+@media (max-width: 600px) {
+  h3{
+    font-size: large;
+  }
+  button{
+    font-size: x-small;
+  }
 }
 </style>

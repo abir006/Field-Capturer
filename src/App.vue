@@ -4,6 +4,7 @@
   <Board/>
   &nbsp;
   <Game/>
+  <h5 class="creator">Creator: Abir Shaked</h5>
 </template>
 
 <script>
@@ -27,5 +28,11 @@ export default {
   margin: 0;
   box-sizing: border-box;
   background-color: #FBEEC1;
+}
+.creator{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-right: 20px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
 <div>
-  <h3 v-if="game.Board" style="color: #2c3e50">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
+  <h3 v-if="game.Board && win===-1" style="color: #2c3e50">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
   <h1 style="color: darkblue;" v-if="win === 1 || win === 2">Winner is: {{ win===1 ? "Penguin" : "Cow" }}</h1>
   <h1 style="color: darkblue;" v-else-if="win === 0">It's a draw !</h1>
   <button v-if="game.Board" class="btn btn-primary" @click="resetGame()">RESET</button>
@@ -71,21 +71,21 @@ export default {
       if(win.value === -1) {
         // check if game board is set
         if (game.Board !== null) {
-          if (playerNumMovesAvailable(game.CurrentPlayer, game.Board) !== 0) {
+          if((playerNumMovesAvailable((game.CurrentPlayer % 2) + 1, game.Board) === 0 && game.CurrentPlayer === 1)){
+            if (playerNumMovesAvailable(game.CurrentPlayer, game.Board) !== 0) {
+              win.value = game.CurrentPlayer
+            } else {
+              win.value = 0
+            }
+          }
+          else if (playerNumMovesAvailable(game.CurrentPlayer, game.Board) !== 0) {
             await game.Players[game.CurrentPlayer].makeTurn()
             if(!(game.Players[game.CurrentPlayer] instanceof HumanPlayer)){
               await new Promise(r => setTimeout(r, 260));
             }
             requestAnimationFrame(nextTurn)
-          } else if (playerNumMovesAvailable((game.CurrentPlayer % 2) + 1, game.Board) !== 0) {
-            swapPlayer()
-            await game.Players[game.CurrentPlayer].makeTurn()
-            if(!(game.Players[game.CurrentPlayer] instanceof HumanPlayer)){
-              await new Promise(r => setTimeout(r, 260));
-            }
-            requestAnimationFrame(nextTurn)
-          } else {
-            win.value = winner()
+          }  else {
+            win.value = (game.CurrentPlayer % 2) + 1
           }
         } else {
           requestAnimationFrame(nextTurn)
@@ -99,7 +99,7 @@ export default {
         nextTurn()
       }
     }
-    const { game , playerNumMovesAvailable, swapPlayer , winner, reset, setPlayer } = global
+    const { game , playerNumMovesAvailable , reset, setPlayer } = global
     return { game, nextTurn, win, resetGame, setPlayer , HumanPlayer, SimpleAiPlayer }
   },
   // this run when game is first created, which will start the game loop.
@@ -157,4 +157,20 @@ export default {
   from {bottom: 30px; opacity: 1;}
   to {bottom: 0; opacity: 0;}
 }
+
+@media (max-width: 600px) {
+  h1{
+    font-size: x-large;
+  }
+  h3{
+    font-size: large;
+  }
+  button{
+    font-size: x-small;
+  }
+}
 </style>
+
+1 , 2
+1stuck -> 2stuck -> tie
+2stuck -> 1stuck -> tie

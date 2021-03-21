@@ -129,7 +129,7 @@ const reverseMove = (direction, board) => {
     const newPosition = currentPosition.Copy().Move(ReverseDirections[direction])
     reverseMoveToNewPosition(newPosition, board)
 }
-const winner = () => {
+/*const winner = () => {
     let player1Captured = 0
     let player2Captured = 0
     for(let row=0; row < game.Rows; row++){
@@ -142,10 +142,10 @@ const winner = () => {
             }
         }
     }
-    return player1Captured > player2Captured ? 1 : player2Captured > player1Captured ? 2 : 0
-}
+    return player1Captured === player2Captured ? 0 : player1Captured > player2Captured ? 1 : 2
+}*/
 const swapPlayer = () => {
     game.CurrentPlayer = (game.CurrentPlayer % 2) + 1
 }
 
-export default { game, setBoard , makeMove, reverseMove, playerNumMovesAvailable, winner, swapPlayer, reset, isPositionLegal, setPlayer }
+export default { game, setBoard , makeMove, reverseMove, playerNumMovesAvailable, swapPlayer, reset, isPositionLegal, setPlayer }
