@@ -5,7 +5,7 @@
 https://fieldcapture-dfa9b.web.app
 
 
-## Project setup for local network
+## Project setup
 ```
 npm install
 ```
