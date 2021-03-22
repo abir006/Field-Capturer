@@ -1,5 +1,10 @@
 # field-capturer
 
+## Project can be viewed and used at the link below
+
+https://fieldcapture-dfa9b.web.app
+
+
 ## Project setup
 ```
 npm install
