@@ -6,20 +6,20 @@ export class Player{
 export class HumanPlayer extends Player{
     async makeTurn() {
         const pressed = await waitingKeypress();
-        if(pressed.key === "w"){
+        if(pressed.keyCode === 	38){
             makeMove(Directions.UP, game.Board)
-        }else if(pressed.key === "a"){
+        }else if(pressed.keyCode === 37){
             makeMove(Directions.LEFT, game.Board)
-        }else if(pressed.key === "s"){
+        }else if(pressed.keyCode === 40){
             makeMove(Directions.DOWN, game.Board)
-        }else if(pressed.key ==="d"){
+        }else if(pressed.keyCode === 39){
             makeMove(Directions.RIGHT, game.Board)
         }
         function waitingKeypress() {
             return new Promise((resolve) => {
                 window.addEventListener('keydown', onKeyHandler);
                 function onKeyHandler(e) {
-                    if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d" || e.key === "RESET") {
+                    if (e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40 || e.key === "RESET") {
                         window.removeEventListener('keydown', onKeyHandler);
                         resolve(e);
                     }
@@ -49,3 +49,10 @@ export class SimpleAiPlayer extends Player{
         makeMove(best_move, game.Board)
     }
 }
+
+/*
+export class MinmaxPlayer extends Player {
+    async makeTurn() {
+        const board = JSON.parse(JSON.stringify(game.Board))
+    }
+}*/

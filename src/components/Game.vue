@@ -1,7 +1,7 @@
 <template>
 <div>
-  <h3 v-if="game.Board && win===-1" style="color: #2c3e50">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
-  <h1 style="color: darkblue;" v-if="win === 1 || win === 2">Winner is: {{ win===1 ? "Penguin" : "Cow" }}</h1>
+  <h3 v-if="game.Board && win ===-1" style="color: #2c3e50">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
+  <h1 style="color: darkblue;" v-if="win === 1 || win === 2">Winner is: {{ win === 1 ? "Penguin" : "Cow" }}</h1>
   <h1 style="color: darkblue;" v-else-if="win === 0">It's a draw !</h1>
   <button v-if="game.Board" class="btn btn-primary" @click="resetGame()">RESET</button>
   <div v-if="!game.Players[1]">
@@ -19,23 +19,28 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import global from "@/global";
 import { HumanPlayer, SimpleAiPlayer } from './Player';
 export default {
   name: "Game",
   setup() {
-    window.addEventListener('touchstart', handleTouchStart)
-    window.addEventListener('touchmove', handleTouchMove)
-
+    /// to minimize calls for checkWin.
+    const win = ref(-1)
+    onMounted(() => {
+      window.addEventListener('touchstart', handleTouchStart)
+      window.addEventListener('touchmove', handleTouchMove)
+    })
+    onUnmounted(() => {
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
+    })
     let xDown = null;
     let yDown = null;
-
     function handleTouchStart(evt) {
       xDown = evt.touches[0].clientX;
       yDown = evt.touches[0].clientY;
     }
-
     function handleTouchMove(evt) {
       if ( ! xDown || ! yDown ) {
         return;
@@ -49,47 +54,37 @@ export default {
 
       if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
         if ( xDiff > 0 ) {
-          window.dispatchEvent(new KeyboardEvent('keydown',{'key':'a','isTrusted': 'true'}));
+          window.dispatchEvent(new KeyboardEvent('keydown',{'keyCode': 37}));
         } else {
-          window.dispatchEvent(new KeyboardEvent('keydown',{'key':'d','isTrusted': 'true'}));
+          window.dispatchEvent(new KeyboardEvent('keydown',{'keyCode': 39}));
         }
       } else {
         if ( yDiff > 0 ) {
-          window.dispatchEvent(new KeyboardEvent('keydown',{'key':'w','isTrusted': 'true'}));
+          window.dispatchEvent(new KeyboardEvent('keydown',{'keyCode': 38}));
         } else {
-          window.dispatchEvent(new KeyboardEvent('keydown',{'key':'s','isTrusted': 'true'}));
+          window.dispatchEvent(new KeyboardEvent('keydown',{'keyCode': 40}));
         }
       }
       /* reset values */
       xDown = null;
       yDown = null;
     }
-    const win = ref(-1)
     // this is the game loop.
     async function nextTurn() {
-      //check if game didnt end
-      if(win.value === -1) {
-        // check if game board is set
-        if (game.Board !== null) {
-          if((playerNumMovesAvailable((game.CurrentPlayer % 2) + 1, game.Board) === 0 && game.CurrentPlayer === 1)){
-            if (playerNumMovesAvailable(game.CurrentPlayer, game.Board) !== 0) {
-              win.value = game.CurrentPlayer
-            } else {
-              win.value = 0
-            }
+      /// check if game started (board is set).
+      if (game.Board) {
+        win.value = checkWin(game.Board)
+        /// if game is not over, make next turn.
+        if (win.value === -1) {
+          await game.Players[game.CurrentPlayer].makeTurn()
+          if (!(game.Players[game.CurrentPlayer] instanceof HumanPlayer)) {
+            ///delay AI players for 260ms, to allow player to see the AI move.
+            await new Promise(r => setTimeout(r, 260));
           }
-          else if (playerNumMovesAvailable(game.CurrentPlayer, game.Board) !== 0) {
-            await game.Players[game.CurrentPlayer].makeTurn()
-            if(!(game.Players[game.CurrentPlayer] instanceof HumanPlayer)){
-              await new Promise(r => setTimeout(r, 260));
-            }
-            requestAnimationFrame(nextTurn)
-          }  else {
-            win.value = (game.CurrentPlayer % 2) + 1
-          }
-        } else {
           requestAnimationFrame(nextTurn)
         }
+      } else {
+        requestAnimationFrame(nextTurn)
       }
     }
     const resetGame = () => {
@@ -99,8 +94,8 @@ export default {
         nextTurn()
       }
     }
-    const { game , playerNumMovesAvailable , reset, setPlayer } = global
-    return { game, nextTurn, win, resetGame, setPlayer , HumanPlayer, SimpleAiPlayer }
+    const { game  , reset, setPlayer, checkWin } = global
+    return { game, nextTurn, resetGame, setPlayer , HumanPlayer, SimpleAiPlayer, win }
   },
   // this run when game is first created, which will start the game loop.
   async created() {

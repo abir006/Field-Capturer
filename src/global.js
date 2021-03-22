@@ -129,23 +129,34 @@ const reverseMove = (direction, board) => {
     const newPosition = currentPosition.Copy().Move(ReverseDirections[direction])
     reverseMoveToNewPosition(newPosition, board)
 }
-/*const winner = () => {
-    let player1Captured = 0
-    let player2Captured = 0
-    for(let row=0; row < game.Rows; row++){
-        for(let col=0; col < game.Cols; col++){
-            if(game.Board[row][col] === Player1Captured){
-                player1Captured++
+/// if a player is stuck, enemy player wins, but because player 1 started, if player 2 is stuck after his turn,
+/// player 1 wins only if he have another move available, otherwise we draw.
+const checkWin = (board) => {
+    if(board) {
+        /// if player 2 is stuck, and its player 1 turn, if player 1 is stuck its a draw, if player 1 is free he wins.
+        /// if player 1 is stuck, and its player 2 turn, we cannot decide score yet (player 2 move will determine it)
+        //  since player 2 can move to a field where he is stuck and draw, or a field where he have another move and win.
+        if ((playerNumMovesAvailable((game.CurrentPlayer % 2) + 1, board) === 0 && game.CurrentPlayer === 1)) {
+            /// player 1 is free, and player 2 is stuck , player 1 win
+            if (playerNumMovesAvailable(game.CurrentPlayer, board) !== 0) {
+                return game.CurrentPlayer
+                ///player 1 and player 2 are stuck ,its a draw
+            } else {
+                return 0
             }
-            else if(game.Board[row][col] === Player2Captured){
-                player2Captured++
-            }
+            /// if current player is stuck enemy player wins
+        } else if (playerNumMovesAvailable(game.CurrentPlayer, board) === 0) {
+            return (game.CurrentPlayer % 2) + 1
+            /// game is not decided yet.
+        } else {
+            return -1
         }
+    }else {
+        return -1
     }
-    return player1Captured === player2Captured ? 0 : player1Captured > player2Captured ? 1 : 2
-}*/
+}
 const swapPlayer = () => {
     game.CurrentPlayer = (game.CurrentPlayer % 2) + 1
 }
 
-export default { game, setBoard , makeMove, reverseMove, playerNumMovesAvailable, swapPlayer, reset, isPositionLegal, setPlayer }
+export default { game, setBoard , makeMove, reverseMove, playerNumMovesAvailable, swapPlayer, reset, isPositionLegal, setPlayer, checkWin }
