@@ -1,5 +1,5 @@
 <template>
-  <div class="jumbotron">
+  <div v-if="show" class="jumbotron">
     <h1>Field Capture</h1>
     <h4 style="color: #2c3e50">A demo game showcasing AI and basic web programing</h4>
     <h5 style="color: #2c3e50">The objective is to capture more field (making more steps) than the rival</h5>
@@ -8,9 +8,18 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue'
 export default {
-  name: "Header"
+  name: "Header",
+  setup() {
+    const show = ref(false)
+    onMounted(() => {
+      show.value = true
+    })
+    return { show }
+  }
 }
+
 </script>
 
 <style scoped>

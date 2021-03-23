@@ -1,19 +1,21 @@
 <template>
-<div>
+<div v-if="show">
   <h3 v-if="game.Board && win ===-1" style="color: #2c3e50">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
   <h1 style="color: darkblue;" v-if="win === 1 || win === 2">Winner is: {{ win === 1 ? "Penguin" : "Cow" }}</h1>
   <h1 style="color: darkblue;" v-else-if="win === 0">It's a draw !</h1>
   <button v-if="game.Board" class="btn btn-primary" @click="resetGame()">RESET</button>
-  <div v-if="!game.Players[1]">
-    <h3 style="color: #2c3e50">Select player for penguin:</h3>
-    <button class="btn btn-primary" @click="setPlayer(1, new HumanPlayer() )">Human</button>&nbsp;
-    <button class="btn btn-primary" @click="setPlayer(1, new SimpleAiPlayer() )">AI</button>
-  </div>
-  <div v-else-if="!game.Players[2]">
-    <h3 style="color: #2c3e50">Select player for cow:</h3>
-    <button class="btn btn-primary" @click="setPlayer(2, new HumanPlayer() )">Human</button>&nbsp;
-    <button class="btn btn-primary" @click="setPlayer(2, new SimpleAiPlayer() )">AI</button>
-  </div>
+  <transition name="fade">
+    <div v-if="!game.Players[1]">
+      <h3 style="color: #2c3e50">Select player for penguin:</h3>
+      <button class="btn btn-primary" @click="setPlayer(1, new HumanPlayer() )">Human</button>&nbsp;
+      <button class="btn btn-primary" @click="setPlayer(1, new SimpleAiPlayer() )">AI</button>
+    </div>
+    <div v-else-if="!game.Players[2]">
+      <h3 style="color: #2c3e50">Select player for cow:</h3>
+      <button class="btn btn-primary" @click="setPlayer(2, new HumanPlayer() )">Human</button>&nbsp;
+      <button class="btn btn-primary" @click="setPlayer(2, new SimpleAiPlayer() )">AI</button>
+    </div>
+  </transition>
   <div id="snackbar">Illegal move, please try again.</div>
 </div>
 </template>
@@ -25,6 +27,10 @@ import { HumanPlayer, SimpleAiPlayer } from './Player';
 export default {
   name: "Game",
   setup() {
+    const show = ref(false)
+    onMounted(() => {
+      show.value = true
+    })
     /// to minimize calls for checkWin.
     const win = ref(-1)
     onMounted(() => {
@@ -95,7 +101,7 @@ export default {
       }
     }
     const { game  , reset, setPlayer, checkWin } = global
-    return { game, nextTurn, resetGame, setPlayer , HumanPlayer, SimpleAiPlayer, win }
+    return { game, nextTurn, resetGame, setPlayer , HumanPlayer, SimpleAiPlayer, win, show }
   },
   // this run when game is first created, which will start the game loop.
   async created() {
@@ -165,7 +171,3 @@ export default {
   }
 }
 </style>
-
-1 , 2
-1stuck -> 2stuck -> tie
-2stuck -> 1stuck -> tie
