@@ -1,19 +1,27 @@
 <template>
 <div v-if="show">
-  <h3 v-if="game.Board && win ===-1" style="color: #2c3e50">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
-  <h1 style="color: darkblue;" v-if="win === 1 || win === 2">Winner is: {{ win === 1 ? "Penguin" : "Cow" }}</h1>
-  <h1 style="color: darkblue;" v-else-if="win === 0">It's a draw !</h1>
+  <h3 v-if="!game.CalculatingMove &&game.Board && win ===-1" style="color: deepskyblue">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
+  <div v-if="game.CalculatingMove">
+    <div class="box">
+      <h3 style="color: deepskyblue">Calculating next move for {{ game.CurrentPlayer===1 ? "Penguin" : "Cow"  }}</h3>
+      <div class="lds-dual-ring"></div>
+    </div>
+  </div>
+  <h1 style="color: deepskyblue;" v-if="win === 1 || win === 2">Winner is: {{ win === 1 ? "Penguin" : "Cow" }}</h1>
+  <h1 style="color: deepskyblue;" v-else-if="win === 0">It's a draw !</h1>
   <button v-if="game.Board" class="btn btn-primary" @click="resetGame()">RESET</button>
   <transition name="fade">
     <div v-if="!game.Players[1]">
-      <h3 style="color: #2c3e50">Select player for penguin:</h3>
+      <h3 style="color: #00C040">Select player for penguin:</h3>
       <button class="btn btn-primary" @click="setPlayer(1, new HumanPlayer() )">Human</button>&nbsp;
-      <button class="btn btn-primary" @click="setPlayer(1, new SimpleAiPlayer() )">AI</button>
+      <button class="btn btn-primary" @click="setPlayer(1, new SimpleAiPlayer() )">Simple AI</button>&nbsp;
+      <button class="btn btn-primary" @click="setPlayer(1, new MinmaxPlayer() )">Minmax AI</button>
     </div>
     <div v-else-if="!game.Players[2]">
-      <h3 style="color: #2c3e50">Select player for cow:</h3>
+      <h3 style="color: #00C040">Select player for cow:</h3>
       <button class="btn btn-primary" @click="setPlayer(2, new HumanPlayer() )">Human</button>&nbsp;
-      <button class="btn btn-primary" @click="setPlayer(2, new SimpleAiPlayer() )">AI</button>
+      <button class="btn btn-primary" @click="setPlayer(2, new SimpleAiPlayer() )">Simple AI</button>&nbsp;
+      <button class="btn btn-primary" @click="setPlayer(2, new MinmaxPlayer() )">Minmax AI</button>
     </div>
   </transition>
   <div id="snackbar">Illegal move, please try again.</div>
@@ -23,7 +31,7 @@
 <script>
 import { ref, onMounted, onUnmounted } from 'vue'
 import global from "@/global";
-import { HumanPlayer, SimpleAiPlayer } from './Player';
+import { HumanPlayer, SimpleAiPlayer, MinmaxPlayer } from './Player';
 export default {
   name: "Game",
   setup() {
@@ -84,8 +92,10 @@ export default {
         if (win.value === -1) {
           await game.Players[game.CurrentPlayer].makeTurn()
           if (!(game.Players[game.CurrentPlayer] instanceof HumanPlayer)) {
+            game.CalculatingMove = true
             ///delay AI players for 260ms, to allow player to see the AI move.
-            await new Promise(r => setTimeout(r, 260));
+            await new Promise(r => setTimeout(r, 500));
+            game.CalculatingMove = false
           }
           requestAnimationFrame(nextTurn)
         }
@@ -94,6 +104,7 @@ export default {
       }
     }
     const resetGame = () => {
+      game.CalculatingMove = false
       reset()
       if(win.value !== -1) {
         win.value = -1
@@ -101,7 +112,7 @@ export default {
       }
     }
     const { game  , reset, setPlayer, checkWin } = global
-    return { game, nextTurn, resetGame, setPlayer , HumanPlayer, SimpleAiPlayer, win, show }
+    return { game, nextTurn, resetGame, setPlayer , HumanPlayer, SimpleAiPlayer, MinmaxPlayer, win, show }
   },
   // this run when game is first created, which will start the game loop.
   async created() {
@@ -111,6 +122,11 @@ export default {
 </script>
 
 <style scoped>
+.box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .btn{
   font-weight: bold;
 }

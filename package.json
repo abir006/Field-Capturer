@@ -12,7 +12,8 @@
     "core-js": "^3.6.5",
     "prevent-pull-refresh": "^1.0.6",
     "v-tooltip": "^2.1.2",
-    "vue": "^3.0.0"
+    "vue": "^3.0.0",
+    "vue-simple-spinner": "^1.2.10"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

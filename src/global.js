@@ -35,8 +35,12 @@ const game = reactive({
     Cols: 0,
     PlayerPositions: Array(),
     CurrentPlayer: 1,
-    Players: Array()
+    Players: Array(),
+    CalculatingMove: false,
 })
+function setCalc(bool) {
+    game.CalculatingMove = bool;
+}
 function showIllegalMoveSnackbar() {
     // Get the snackbar DIV
     let x = document.getElementById("snackbar");
@@ -159,4 +163,4 @@ const swapPlayer = () => {
     game.CurrentPlayer = (game.CurrentPlayer % 2) + 1
 }
 
-export default { game, setBoard , makeMove, reverseMove, playerNumMovesAvailable, swapPlayer, reset, isPositionLegal, setPlayer, checkWin }
+export default { game, setBoard , makeMove, reverseMove, playerNumMovesAvailable, swapPlayer, reset, isPositionLegal, setPlayer, checkWin, setCalc }

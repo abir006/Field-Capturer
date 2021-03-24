@@ -1,9 +1,12 @@
 <template>
-  <div v-if="show" class="jumbotron">
+  <div v-if="show">
+    &nbsp;
     <h1>Field Capture</h1>
-    <h4 style="color: #2c3e50">A demo game showcasing AI and basic web programing</h4>
-    <h5 style="color: #2c3e50">The objective is to capture more field (making more steps) than the rival</h5>
-    <h4>Controls: PC-Arrows. Mobile-Swipe.</h4>
+    <h4 style="color: #00C040">A demo game showcasing AI and basic web programing</h4>
+    <h5 style="color: #00C040">The objective is to capture more field (making more steps) than the rival</h5>
+    <h4 style="color: #00C040">Controls: PC-Arrows. Mobile-Swipe.</h4>
+    <hr>
+    &nbsp;
   </div>
 </template>
 
@@ -23,12 +26,16 @@ export default {
 </script>
 
 <style scoped>
-.jumbotron, * {
-  background-color: #659DBD;
-  font-weight: bold;
+*{
+  font-family: Palatino,serif;
+}
+hr{
+  width: 80%;
+  border-bottom: 3px solid white;
 }
 h1{
-  color: whitesmoke
+  color: whitesmoke;
+  font-weight: bolder;
 }
 @media (max-width: 600px) {
   h1{
