@@ -92,9 +92,11 @@ const playerNumMovesAvailable = (player, board) => {
     return numSteps
 }
 const isPositionLegal = (position, board) => {
-    if(0 <= position.row && position.row < game.Rows && 0 <= position.col && position.col < game.Cols){
-        if(board[position.row][position.col] === EmptyField){
-            return true
+    if(board){
+        if(0 <= position.row && position.row < game.Rows && 0 <= position.col && position.col < game.Cols){
+            if(board[position.row][position.col] === EmptyField){
+                return true
+            }
         }
     }
     return false

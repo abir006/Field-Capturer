@@ -3,26 +3,23 @@
       <Header/>
     </transition>
   <div class="hh">
-    &nbsp;
-    <Board/>
-    &nbsp;
     <transition name="slide-reverse">
       <Game/>
     </transition>
-    <h5 class="creator">Creator: Abir Shaked</h5>
   </div>
+  <a href="http://www.freepik.com">Designed by upklyak / Freepik</a>
+  <h5 class="creator">Created by Abir Shaked</h5>
 </template>
 
 <script>
 import 'prevent-pull-refresh';
 import Header from './components/Header.vue'
-import Board from './components/Board.vue'
 import Game from "@/components/Game";
 import global from "@/global";
 export default {
   name: 'App',
   components: {
-    Header, Board, Game
+    Header, Game
   },
   setup() {
     const { game } = global
@@ -32,30 +29,85 @@ export default {
 </script>
 
 <style>
-.lds-dual-ring {
+.lds-spinner {
+  color: #ffffff;
   display: inline-block;
-  width: 80px;
-  height: 80px;
+  position: relative;
+  width: 40px;
+  height: 40px;
 }
-.lds-dual-ring:after {
+.lds-spinner div {
+  transform-origin: 20px 20px;
+  animation: lds-spinner 1.2s linear infinite;
+}
+.lds-spinner div:after {
   content: " ";
   display: block;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: lds-dual-ring 1.2s linear infinite;
+  position: absolute;
+  top: 1.5px;
+  left: 18.5px;
+  width: 3px;
+  height: 9px;
+  border-radius: 20%;
+  background: #fff;
 }
-@keyframes lds-dual-ring {
+.lds-spinner div:nth-child(1) {
+  transform: rotate(0deg);
+  animation-delay: -1.1s;
+}
+.lds-spinner div:nth-child(2) {
+  transform: rotate(30deg);
+  animation-delay: -1s;
+}
+.lds-spinner div:nth-child(3) {
+  transform: rotate(60deg);
+  animation-delay: -0.9s;
+}
+.lds-spinner div:nth-child(4) {
+  transform: rotate(90deg);
+  animation-delay: -0.8s;
+}
+.lds-spinner div:nth-child(5) {
+  transform: rotate(120deg);
+  animation-delay: -0.7s;
+}
+.lds-spinner div:nth-child(6) {
+  transform: rotate(150deg);
+  animation-delay: -0.6s;
+}
+.lds-spinner div:nth-child(7) {
+  transform: rotate(180deg);
+  animation-delay: -0.5s;
+}
+.lds-spinner div:nth-child(8) {
+  transform: rotate(210deg);
+  animation-delay: -0.4s;
+}
+.lds-spinner div:nth-child(9) {
+  transform: rotate(240deg);
+  animation-delay: -0.3s;
+}
+.lds-spinner div:nth-child(10) {
+  transform: rotate(270deg);
+  animation-delay: -0.2s;
+}
+.lds-spinner div:nth-child(11) {
+  transform: rotate(300deg);
+  animation-delay: -0.1s;
+}
+.lds-spinner div:nth-child(12) {
+  transform: rotate(330deg);
+  animation-delay: 0s;
+}
+@keyframes lds-spinner {
   0% {
-    transform: rotate(0deg);
+    opacity: 1;
   }
   100% {
-    transform: rotate(360deg);
+    opacity: 0;
   }
 }
+
 
 .slide-reverse-leave-active,
 .slide-reverse-enter-active {
@@ -86,16 +138,30 @@ html, body {
 #app {
   height: 100%;
   font-family: Avenir, Helvetica, Arial, sans-serif;
+  background-image: url("assets/FieldCapture-Background.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+/*
   background-image: linear-gradient(to right bottom, #434343, #333333, #242424, #161616, #000000);
+*/
   text-align: center;
 }
-
+.btn{
+  font-weight: bold;
+  box-shadow: 2px 2px 4px black;
+}
 .creator{
   position: absolute;
-  bottom: 0;
+  bottom: 10px;
   right: 0;
   margin-right: 20px;
 }
+ a {
+   position: absolute;
+   bottom: 0;
+   right: 0;
+   margin-right: 20px;
+ }
 .fade-leave-active {
   transition: opacity 0.35s ease-in-out;
   position: absolute;

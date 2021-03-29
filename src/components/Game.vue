@@ -1,24 +1,24 @@
 <template>
 <div v-if="show">
-  <h3 v-if="!game.CalculatingMove &&game.Board && win ===-1" style="color: deepskyblue">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
+  <h3 v-if="!game.CalculatingMove &&game.Board && win ===-1" style="color: black; font-weight: bold">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
   <div v-if="game.CalculatingMove">
     <div class="box">
-      <h3 style="color: deepskyblue">Calculating next move for {{ game.CurrentPlayer===1 ? "Penguin" : "Cow"  }}</h3>
-      <div class="lds-dual-ring"></div>
-    </div>
+      <h3 style="color: black; font-weight: bold">Calculating next move for {{ game.CurrentPlayer===1 ? "Penguin" : "Cow"  }}</h3>
+      <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>    </div>
   </div>
-  <h1 style="color: deepskyblue;" v-if="win === 1 || win === 2">Winner is: {{ win === 1 ? "Penguin" : "Cow" }}</h1>
-  <h1 style="color: deepskyblue;" v-else-if="win === 0">It's a draw !</h1>
+  <h1 style="color: black; font-weight: bold" v-if="win === 1 || win === 2">Winner is: {{ win === 1 ? "Penguin" : "Cow" }}</h1>
+  <h1 style="color: black; font-weight: bold" v-else-if="win === 0">It's a draw !</h1>
+  <Board/>
   <button v-if="game.Board" class="btn btn-primary" @click="resetGame()">RESET</button>
   <transition name="fade">
     <div v-if="!game.Players[1]">
-      <h3 style="color: #00C040">Select player for penguin:</h3>
+      <h3 style="color: black">Select player for penguin:</h3>
       <button class="btn btn-primary" @click="setPlayer(1, new HumanPlayer() )">Human</button>&nbsp;
       <button class="btn btn-primary" @click="setPlayer(1, new SimpleAiPlayer() )">Simple AI</button>&nbsp;
       <button class="btn btn-primary" @click="setPlayer(1, new MinmaxPlayer() )">Minmax AI</button>
     </div>
     <div v-else-if="!game.Players[2]">
-      <h3 style="color: #00C040">Select player for cow:</h3>
+      <h3 style="color: black">Select player for cow:</h3>
       <button class="btn btn-primary" @click="setPlayer(2, new HumanPlayer() )">Human</button>&nbsp;
       <button class="btn btn-primary" @click="setPlayer(2, new SimpleAiPlayer() )">Simple AI</button>&nbsp;
       <button class="btn btn-primary" @click="setPlayer(2, new MinmaxPlayer() )">Minmax AI</button>
@@ -32,8 +32,10 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import global from "@/global";
 import { HumanPlayer, SimpleAiPlayer, MinmaxPlayer } from './Player';
+import Board from '@/components/Board.vue'
 export default {
   name: "Game",
+  components: { Board },
   setup() {
     const show = ref(false)
     onMounted(() => {
@@ -90,20 +92,22 @@ export default {
         win.value = checkWin(game.Board)
         /// if game is not over, make next turn.
         if (win.value === -1) {
-          await game.Players[game.CurrentPlayer].makeTurn()
           if (!(game.Players[game.CurrentPlayer] instanceof HumanPlayer)) {
             game.CalculatingMove = true
-            ///delay AI players for 260ms, to allow player to see the AI move.
+            ///delay AI players for 500ms, to allow player to see the AI move.
             await new Promise(r => setTimeout(r, 500));
-            game.CalculatingMove = false
           }
+          if(game.Board){
+            await game.Players[game.CurrentPlayer].makeTurn()
+          }
+          game.CalculatingMove = false
           requestAnimationFrame(nextTurn)
         }
       } else {
         requestAnimationFrame(nextTurn)
       }
     }
-    const resetGame = () => {
+    function resetGame() {
       game.CalculatingMove = false
       reset()
       if(win.value !== -1) {
@@ -126,9 +130,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.btn{
-  font-weight: bold;
 }
 #snackbar {
   visibility: hidden; /* Hidden by default. Visible on click */
