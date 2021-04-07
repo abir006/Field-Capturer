@@ -24,11 +24,14 @@
       </div>
       <div v-else>
         <h3 style="color: black">Select a game board:</h3>
-        <button class="btn btn-primary" @click="setBoard(smallMap)">Small</button>&nbsp;
-        <button class="btn btn-primary" @click="setBoard(mediumMap)">Medium</button>&nbsp;
-        <button class="btn btn-primary" @click="setBoard(largeMap)">Large</button>&nbsp;
-        <button class="btn btn-primary" @click="setBoard(xLargeMap)">Xlarge</button>&nbsp;
-        <button class="btn btn-primary" @click="setBoard(xxLargeMap)">XXlarge</button>&nbsp;
+        <div style="display: grid;justify-items: center;align-items: center;gap: 16px">
+          <button class="btn btn-primary" @click="setBoard(smallMap)">Small</button>
+          <button class="btn btn-primary" @click="setBoard(mediumMap)">Medium</button>
+          <button class="btn btn-primary" @click="setBoard(largeMap)">Large</button>
+          <button class="btn btn-primary" @click="setBoard(xLargeMap)">Xlarge</button>
+          <button class="btn btn-primary" @click="setBoard(xxLargeMap)">XXlarge</button>
+          <button class="btn btn-primary" @click="setBoard(xxLargeMap2)">XXlarge2</button>
+        </div>
       </div>
     </div>
   </transition>
@@ -76,7 +79,16 @@ name: "Board",
             [" ", " ", "X"," ", " ", "X", " ", " "],
             [" ", " ", " "," ", " ", " ", " ", " "],
           ], Rows : 6, Cols: 8})
-    return { game , smallMap, mediumMap, largeMap,xLargeMap,xxLargeMap, setBoard, Player1, Player2, Player1Captured,Player2Captured, EmptyField }
+    const xxLargeMap2 =
+        ({Board : [
+            ["X", " ", " "," ", " ", " ", " ", "X"],
+            [" ", " ", "X"," ", " ", "X", " ", " "],
+            [" ", " ", " ","X", "X", " ", " ", " "],
+            [" ", "X", " "," ", " ", " ", "X", " "],
+            [" ", " ", " "," ", " ", " ", " ", " "],
+            [" ", " ", " ","1", "2", " ", " ", " "],
+          ], Rows : 6, Cols: 8})
+    return { game , smallMap, mediumMap, largeMap,xLargeMap,xxLargeMap,xxLargeMap2, setBoard, Player1, Player2, Player1Captured,Player2Captured, EmptyField }
   }
 }
 </script>
@@ -131,12 +143,16 @@ img {
 /*.row:nth-child(odd) .img-wrapper:nth-child(even){
   background-color: rgba(255, 255, 255, 0.1)
 }*/
+button{
+  width: 100px;
+}
 @media (max-width: 600px) {
   h3{
     font-size: large;
   }
   button{
     font-size: x-small;
+    width: 76px;
   }
 }
 </style>

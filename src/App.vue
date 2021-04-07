@@ -1,34 +1,81 @@
 <template>
     <transition name="slide">
-      <Header/>
+      <div v-if="mountTransition" style="padding-top: 4px">
+        <div style="display: flex;justify-content: space-between;padding-left: 2.5%">
+          <div>
+            <h1>Field Capture</h1>
+          </div>
+          <div style="margin: auto 0;padding-right: 2.5%">
+            <button class="bg-transparent" @click="setSection('play')">Play</button>
+            <button class="bg-transparent" @click="setSection('about')">About</button>
+            <button class="bg-transparent" @click="setSection('controls')">Controls</button>
+          </div>
+        </div>
+        <hr style="margin-top: 0;width: 95%;border-bottom: 3px solid white;">
+      </div>
     </transition>
-  <div class="hh">
-    <transition name="slide-reverse">
-      <Game/>
+    <transition name="slide-reverse" mode="out-in">
+      <div v-if="section==='controls'" style="margin: 10% 0">
+        <h3 class="headers">PC: &nbsp;Arrows. <br>Mobile: &nbsp;Swipe.</h3>
+        <h4 class="headers" >The objective is to capture more field (making more steps) than the rival.</h4>
+      </div>
+    <div v-else-if="section==='about'" style="margin: 10% 0">
+      <div class="credits">
+        <a class="created" href="https://github.com/abir006">Created by Abir Shaked</a><br><br>
+      </div>
+      <h3 class="headers" >
+        A demo game Showcasing how i handle learning new PL's and tools:<br>
+        <br>1. Learning Web from scratch: Vue js, CSS, Javascript.
+        <br>2. Implementing AI(MinMax) in Javascript.
+      </h3>
+      <div class="credits">
+        <a class="backImg" href="http://www.freepik.com">Background by upklyak / Freepik</a>
+      </div>
+    </div>
+    <div v-else-if="section==='play'" class="hh" style="margin: 5% 0">
+        <Game/>
+    </div>
     </transition>
-  </div>
-  <a href="http://www.freepik.com">Designed by upklyak / Freepik</a>
-  <h5 class="creator">Created by Abir Shaked</h5>
 </template>
 
 <script>
+import {onMounted, ref} from 'vue'
 import 'prevent-pull-refresh';
-import Header from './components/Header.vue'
 import Game from "@/components/Game";
 import global from "@/global";
 export default {
   name: 'App',
   components: {
-    Header, Game
+   Game
   },
   setup() {
+    const mountTransition = ref(false)
+    onMounted(() => {
+      mountTransition.value = true
+      section.value = 'play'
+    })
+    function setSection(setTo){
+      section.value = setTo
+    }
     const { game } = global
-    return { game }
+    const section = ref()
+    return { game, section, mountTransition, setSection }
   }
 }
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@1,700&display=swap');
+.headers{
+  padding-left: 5%;
+  text-align: left;
+}
+.bg-transparent{
+  font-size: 20px;
+  border: none;
+  text-align: center;
+  margin-left: 10px;
+}
 .lds-spinner {
   color: #ffffff;
   display: inline-block;
@@ -107,21 +154,21 @@ export default {
     opacity: 0;
   }
 }
-
-
-.slide-reverse-leave-active,
+.slide-reverse-leave-active{
+  transition: 0.4s;
+}
 .slide-reverse-enter-active {
-  transition: 1s;
+  transition: 1.2s;
 }
 .slide-reverse-enter-from {
-  transform: translate(100%, 0);
+  transform: translate(-100%, 0);
 }
 .slide-reverse-leave-to {
   transform: translate(-100%, 0);
 }
 .slide-leave-active,
 .slide-enter-active {
-  transition: 1s;
+  transition: 2s;
 }
 .slide-enter-from {
   transform: translate(0, -100%);
@@ -136,8 +183,8 @@ html, body {
 }
 
 #app {
+  font-family: 'Alegreya', serif;
   height: 100%;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   background-image: url("assets/FieldCapture-Background.jpg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
@@ -150,18 +197,10 @@ html, body {
   font-weight: bold;
   box-shadow: 2px 2px 4px black;
 }
-.creator{
-  position: absolute;
-  bottom: 10px;
-  right: 0;
-  margin-right: 20px;
+.credits{
+  text-align: left;
+  margin-left: 5%;
 }
- a {
-   position: absolute;
-   bottom: 0;
-   right: 0;
-   margin-right: 20px;
- }
 .fade-leave-active {
   transition: opacity 0.35s ease-in-out;
   position: absolute;
@@ -178,8 +217,6 @@ html, body {
   margin-left: auto;
   margin-right: auto;
 }
-
-
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
@@ -188,5 +225,49 @@ html, body {
   right: 0;
   margin-left: auto;
   margin-right: auto;
+}
+.created{
+  font-size: xx-large;
+}
+.backImg{
+ font-size: medium;
+}
+@media(max-width: 600px) {
+  h1{
+    font-size: xx-large  !important;
+  }
+  h3{
+    font-size: large  !important;
+  }
+  h4{
+    font-size: medium  !important;
+  }
+  h5{
+    font-size: small  !important;
+  }
+  .bg-transparent{
+    font-size: 16px;
+    margin-left: 0px;
+  }
+  .created{
+    font-size: x-large;
+  }
+  .backImg{
+    font-size: small;
+  }
+  .lds-spinner {
+    width: 25px;
+    height: 25px;
+  }
+  .lds-spinner div {
+    transform-origin: 10px 10px;
+  }
+  .lds-spinner div:after {
+    top: 0.75px;
+    left: 9.25px;
+    width: 1.5px;
+    height: 4.5px;
+    border-radius: 10%;
+  }
 }
 </style>

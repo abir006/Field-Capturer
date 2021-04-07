@@ -7,6 +7,10 @@ export const Player1 = "1"
 export const Player2 = "2"
 export const Player1Captured = "captured1"
 export const Player2Captured = "captured2"
+export const WIN = 1
+export const LOSE = -1
+export const NOT_FINISHED = -1
+export const DRAW = 0
 
 class Position{
     constructor(row, col) {
@@ -38,9 +42,7 @@ const game = reactive({
     Players: Array(),
     CalculatingMove: false,
 })
-function setCalc(bool) {
-    game.CalculatingMove = bool;
-}
+
 function showIllegalMoveSnackbar() {
     // Get the snackbar DIV
     let x = document.getElementById("snackbar");
@@ -135,8 +137,8 @@ const reverseMove = (direction, board) => {
     const newPosition = currentPosition.Copy().Move(ReverseDirections[direction])
     reverseMoveToNewPosition(newPosition, board)
 }
-/// if a player is stuck, enemy player wins, but because player 1 started, if player 2 is stuck after his turn,
-/// player 1 wins only if he have another move available, otherwise we draw.
+/** if a player is stuck, enemy player wins, but because player 1 started, if player 2 is stuck after his turn, **/
+/** player 1 wins only if he have another move available, otherwise we draw. **/
 const checkWin = (board) => {
     if(board) {
         /// if player 2 is stuck, and its player 1 turn, if player 1 is stuck its a draw, if player 1 is free he wins.
@@ -148,21 +150,21 @@ const checkWin = (board) => {
                 return game.CurrentPlayer
                 ///player 1 and player 2 are stuck ,its a draw
             } else {
-                return 0
+                return DRAW
             }
             /// if current player is stuck enemy player wins
         } else if (playerNumMovesAvailable(game.CurrentPlayer, board) === 0) {
             return (game.CurrentPlayer % 2) + 1
             /// game is not decided yet.
         } else {
-            return -1
+            return NOT_FINISHED
         }
     }else {
-        return -1
+        return NOT_FINISHED
     }
 }
 const swapPlayer = () => {
     game.CurrentPlayer = (game.CurrentPlayer % 2) + 1
 }
 
-export default { game, setBoard , makeMove, reverseMove, playerNumMovesAvailable, swapPlayer, reset, isPositionLegal, setPlayer, checkWin, setCalc }
+export default { game, setBoard , makeMove, reverseMove, playerNumMovesAvailable, swapPlayer, reset, isPositionLegal, setPlayer, checkWin }

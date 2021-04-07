@@ -1,31 +1,38 @@
 <template>
-<div v-if="show">
-  <h3 v-if="!game.CalculatingMove &&game.Board && win ===-1" style="color: black; font-weight: bold">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
-  <div v-if="game.CalculatingMove">
-    <div class="box">
-      <h3 style="color: black; font-weight: bold">Calculating next move for {{ game.CurrentPlayer===1 ? "Penguin" : "Cow"  }}</h3>
-      <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>    </div>
+  <div v-if="win === -1 && game.Board">
+    <h3 v-if="!game.CalculatingMove" style="color: black; font-weight: bold">Current player turn: {{ game.CurrentPlayer===1 ? "Penguin" : "Cow" }}</h3>
+    <div v-if="game.CalculatingMove">
+      <div class="box">
+        <h3 style="color: black; font-weight: bold">Calculating next move for {{ game.CurrentPlayer===1 ? "Penguin" : "Cow"  }}</h3>
+        <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>    </div>
+    </div>
   </div>
-  <h1 style="color: black; font-weight: bold" v-if="win === 1 || win === 2">Winner is: {{ win === 1 ? "Penguin" : "Cow" }}</h1>
-  <h1 style="color: black; font-weight: bold" v-else-if="win === 0">It's a draw !</h1>
+  <div v-else-if="game.Board">
+    <h1 style="color: black; font-weight: bold" v-if="win === 1 || win === 2">Winner is: {{ win === 1 ? "Penguin" : "Cow" }}</h1>
+    <h1 style="color: black; font-weight: bold" v-else-if="win === 0">It's a draw !</h1>
+  </div>
+  &nbsp;
   <Board/>
   <button v-if="game.Board" class="btn btn-primary" @click="resetGame()">RESET</button>
   <transition name="fade">
     <div v-if="!game.Players[1]">
       <h3 style="color: black">Select player for penguin:</h3>
-      <button class="btn btn-primary" @click="setPlayer(1, new HumanPlayer() )">Human</button>&nbsp;
-      <button class="btn btn-primary" @click="setPlayer(1, new SimpleAiPlayer() )">Simple AI</button>&nbsp;
-      <button class="btn btn-primary" @click="setPlayer(1, new MinmaxPlayer() )">Minmax AI</button>
+      <div style="display: grid;justify-items: center;align-items: center;gap: 16px">
+        <button class="btn btn-primary" @click="setPlayer(1, new HumanPlayer() )">Human</button>
+        <button class="btn btn-primary" @click="setPlayer(1, new SimpleAiPlayer() )">Simple AI</button>
+        <button class="btn btn-primary" @click="setPlayer(1, new MinmaxPlayer() )">Minmax AI</button>
+        </div>
     </div>
     <div v-else-if="!game.Players[2]">
       <h3 style="color: black">Select player for cow:</h3>
-      <button class="btn btn-primary" @click="setPlayer(2, new HumanPlayer() )">Human</button>&nbsp;
-      <button class="btn btn-primary" @click="setPlayer(2, new SimpleAiPlayer() )">Simple AI</button>&nbsp;
-      <button class="btn btn-primary" @click="setPlayer(2, new MinmaxPlayer() )">Minmax AI</button>
+      <div style="display: grid;justify-items: center;align-items: center;gap: 16px">
+        <button class="btn btn-primary" @click="setPlayer(2, new HumanPlayer() )">Human</button>
+        <button class="btn btn-primary" @click="setPlayer(2, new SimpleAiPlayer() )">Simple AI</button>
+        <button class="btn btn-primary" @click="setPlayer(2, new MinmaxPlayer() )">Minmax AI</button>
+    </div>
     </div>
   </transition>
   <div id="snackbar">Illegal move, please try again.</div>
-</div>
 </template>
 
 <script>
@@ -33,23 +40,27 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import global from "@/global";
 import { HumanPlayer, SimpleAiPlayer, MinmaxPlayer } from './Player';
 import Board from '@/components/Board.vue'
+let nextTurnRunning = false;
 export default {
   name: "Game",
   components: { Board },
   setup() {
-    const show = ref(false)
-    onMounted(() => {
-      show.value = true
-    })
     /// to minimize calls for checkWin.
     const win = ref(-1)
     onMounted(() => {
       window.addEventListener('touchstart', handleTouchStart)
       window.addEventListener('touchmove', handleTouchMove)
+      // this run when game is first created, which will start the game loop.
+      if(!nextTurnRunning){
+        nextTurnRunning = true;
+        requestAnimationFrame(nextTurn);
+      }
     })
     onUnmounted(() => {
       window.removeEventListener('touchstart', handleTouchStart)
       window.removeEventListener('touchmove', handleTouchMove)
+      nextTurnRunning = false;
+      resetGame();
     })
     let xDown = null;
     let yDown = null;
@@ -87,46 +98,51 @@ export default {
     }
     // this is the game loop.
     async function nextTurn() {
-      /// check if game started (board is set).
-      if (game.Board) {
-        win.value = checkWin(game.Board)
-        /// if game is not over, make next turn.
-        if (win.value === -1) {
-          if (!(game.Players[game.CurrentPlayer] instanceof HumanPlayer)) {
-            game.CalculatingMove = true
-            ///delay AI players for 500ms, to allow player to see the AI move.
-            await new Promise(r => setTimeout(r, 500));
+      if(nextTurnRunning){
+        /// check if game started (board is set).
+        if (game.Board) {
+          win.value = checkWin(game.Board)
+          /// if game is not over, make next turn.
+          if (win.value === -1) {
+            if (!(game.Players[game.CurrentPlayer] instanceof HumanPlayer)) {
+              game.CalculatingMove = true
+              ///delay AI players for 500ms, to allow player to see the AI move.
+              await new Promise(r => setTimeout(r, 500));
+            }
+            if(game.Board){
+              await game.Players[game.CurrentPlayer].makeTurn()
+            }
+            game.CalculatingMove = false
+            requestAnimationFrame(nextTurn)
           }
-          if(game.Board){
-            await game.Players[game.CurrentPlayer].makeTurn()
-          }
-          game.CalculatingMove = false
+        } else {
           requestAnimationFrame(nextTurn)
         }
-      } else {
-        requestAnimationFrame(nextTurn)
       }
     }
     function resetGame() {
       game.CalculatingMove = false
-      reset()
-      if(win.value !== -1) {
+      if(win.value !== -1 && nextTurnRunning){
         win.value = -1
-        nextTurn()
+        reset()
+        requestAnimationFrame(nextTurn)
+      }else{
+        reset()
+        if(!nextTurnRunning){
+          requestAnimationFrame(nextTurn)
+        }
       }
     }
     const { game  , reset, setPlayer, checkWin } = global
-    return { game, nextTurn, resetGame, setPlayer , HumanPlayer, SimpleAiPlayer, MinmaxPlayer, win, show }
-  },
-  // this run when game is first created, which will start the game loop.
-  async created() {
-    await this.nextTurn()
+    return { game, nextTurn, resetGame, setPlayer , HumanPlayer, SimpleAiPlayer, MinmaxPlayer, win }
   }
 }
 </script>
 
 <style scoped>
 .box{
+  margin: 0;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -175,7 +191,9 @@ export default {
   from {bottom: 30px; opacity: 1;}
   to {bottom: 0; opacity: 0;}
 }
-
+button{
+  width: 100px;
+}
 @media (max-width: 600px) {
   h1{
     font-size: x-large;
@@ -184,7 +202,9 @@ export default {
     font-size: large;
   }
   button{
+    width: 76px;
     font-size: x-small;
   }
 }
+
 </style>
