@@ -1,14 +1,26 @@
 <template>
     <transition name="slide">
-      <div v-if="mountTransition" style="padding-top: 4px">
+      <div v-if="mountTransition" style="padding-top: 4px;">
         <div style="display: flex;justify-content: space-between;padding-left: 2.5%">
           <div>
             <h1>Field Capture</h1>
           </div>
           <div style="margin: auto 0;padding-right: 2.5%">
-            <button class="bg-transparent" @click="setSection('play')">Play</button>
-            <button class="bg-transparent" @click="setSection('about')">About</button>
-            <button class="bg-transparent" @click="setSection('controls')">Controls</button>
+            <button class="bg-transparent" @click="setSection('play')">
+                <a v-bind:style="section==='play' ? 'Color: white; text-shadow: 0 0 5px white;' : 'Color: black;'">
+                  Play
+                </a>
+            </button>
+            <button class="bg-transparent" @click="setSection('about')">
+              <a v-bind:style="section==='about' ? 'Color: white; text-shadow: 0 0 5px white;' : 'Color: black;'">
+                About
+              </a>
+            </button>
+            <button class="bg-transparent" @click="setSection('controls')">
+              <a v-bind:style="section==='controls' ? 'Color: white; text-shadow: 0 0 5px white;' : 'Color: black;'">
+                Controls
+              </a>
+            </button>
           </div>
         </div>
         <hr style="margin-top: 0;width: 95%;border-bottom: 3px solid white;">
@@ -76,6 +88,7 @@ export default {
   text-align: center;
   margin-left: 10px;
 }
+a:hover { text-shadow: 0 0 5px white; }
 .lds-spinner {
   color: #ffffff;
   display: inline-block;

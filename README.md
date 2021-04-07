@@ -1,4 +1,10 @@
-# field-capturer
+# Field-Capture
+
+## Project goal
+
+### Showcasing how i handle learning new PL's and tools:
+1. Learning Web from scratch: Vue js, CSS, Javascript.
+2. Implement AI(MinMax) in Javascript.
 
 ## Project can be viewed and used at the link below
 
