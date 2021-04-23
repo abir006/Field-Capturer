@@ -1,7 +1,7 @@
 # Field-Capture
 ## About the application
 Field Capture is a web application board game, where the objective is to make more steps than the rival.
-## Project goal
+## Project goals
 1. Showcasing the learning process of new PL's and Tools from scratch: Javascript,Vue.js,CSS,HTML.
 2. Implement AI(MinMax) in Javascript.
 
